@@ -1,87 +1,62 @@
 #include <stdio.h>
-#include <string.h>
-
-struct job{
-	char name[20];
-	int at,bt,ct,tat,wt,st,tbt;
-	
-}
-job[10];
-int n,j,i;
-float avg_tat = 0;
-float avg_wt = 0;
-
-void take_input(){
-	printf("Enter The No. of Process:");
-	scanf("%d",&n);
-	for(i = 0;i<n;i++){
-		printf("Enter The Arrival Time of the Process %d :",i);
-		scanf("%d",&job[i].at);
-	}
-	for(i = 0;i<n;i++){
-		printf("Enter The Bust Time of the Process %d :",i);
-		scanf("%d",&job[i].bt);
-		job[i].tbt = job[i].bt;
-	}
-	for(i = 0;i<n;i++){
-		printf("Enter The Name of the Process %d :",i);
-		scanf("%s",&job[i].name);
-	}
-	
+int n, i, j, at[10], bt[10], ct[10], tat[10], wt[10];
+float avg_tat, avg_wt;
+void take_input()
+{
+    printf("Enter the number of process:");
+    scanf("%d", &n);
+    for (i = 0; i < n; i++)
+    {
+        printf("Enter the number of arrival time:");
+        scanf("%d", &at[i]);
+        printf("Enter the number of burst time:");
+        scanf("%d", &bt[i]);
+    }
 }
 
-void sort(){
-	struct job temp;
-	for(i=0;i<n;i++){
-		for(j=i+1;j<n;j++){
-			if(job[i].at > job[j].at){
-				temp = job[i];
-				job[i] = job[j];
-				job[j] = temp;
-			}
-		}
-	}
+void process()
+{
+    // int time;
+
+    ct[0] = bt[0];
+    for (i = 0; i < n; i++)
+    {
+        // ct[i] = time;
+        ct[i + 1] = ct[i] + bt[i + 1];
+        tat[i] = ct[i] - at[i];
+        wt[i] = tat[i] - bt[i];
+    }
 }
 
-void process(){
-	int time = job[0].at;
-	for(j=0;j<n;j++){
-		job[j].st = time;
-		printf(" | %d %s ",job[j].st,job[j].name);
-		time = time + job[j].tbt;
-		job[j].ct = time;
-		job[j].tat = time - job[j].at;
-		job[j].wt = job[j].tat - job[j].tbt;
-		printf("%d | ",time);
-	}
+void process_avg()
+{
+    avg_wt = 0;
+    avg_tat = 0;
+    for (i = 0; i < n; i++)
+    {
+        avg_tat += tat[i];
+        avg_wt += wt[i];
+    }
+    avg_tat = (double)(avg_tat / n);
+    avg_wt = (double)(avg_wt / n);
 }
 
-void print_ouput(){
-	printf("\n\n");
-	printf("\n-----------------------------------------");
-	printf("\n PName	At	BT	TAT	WT ");
-	printf("\n-----------------------------------------");
-	for(i=0;i<n;i++){
-		printf("\n%s	%8d	%5d	%4d	%3d",job[i].name,job[i].at,job[i].bt,job[i].tat,job[i].wt);
-		avg_tat = avg_tat + (float)(job[i].tat);
-		avg_wt = (float)avg_wt + (float)(job[i].wt);
-	}
-	printf("\n-----------------------------------------");
-	printf("\n THe Avg of the turn Around Time is %f:",avg_tat/n);
-	printf("\n The Avg of the Waiting Time is %f:",avg_wt/n);
-}
+void display()
+{
+    printf("\n\nArrival Time\tBurst Time\tExit Time\tTAT\tWaiting Time\n ");
+    for (i = 0; i < n; i++)
+    {
+        // printf("Arrival Time\tBurst Time\tExit Time\tTAT\tWaiting Time\n ");
+        printf("%d\t\t %d\t\t %d\t\t %d\t\t %d\n", at[i], bt[i], ct[i], tat[i], wt[i]);
+    }
 
-void main() {
-	int i;
-	take_input();
-	sort();
-	process();
-	print_ouput();
-	printf("\n\n");
-	for(i=0;i<n;i++){
-		job[i].tbt = job[i].bt = rand()%10+1;
-		job[i].at = job[i].ct + 2;
-	}
-	process();
-	print_ouput;
+    printf("\n\nAverage Turnaround time = %f \n", avg_tat);
+    printf("Average Turnaround time = %f ", avg_wt);
+}
+void main()
+{
+    take_input();
+    process();
+    process_avg();
+    display();
 }
